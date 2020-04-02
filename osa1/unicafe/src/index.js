@@ -3,19 +3,22 @@ import ReactDOM from 'react-dom';
 
 const Button = ({handleClick, text}) => <button onClick={handleClick}> {text} </button>
 
-const StatisticsLine = ({value, text}) => <p>{text} {value}</p>
+const StatisticsLine = ({value, text}) => <tr><td>{text}</td><td>{value}</td></tr> 
 
 const Statistics = (props) => {
   const {good, neutral, bad} = props;
   return (
-    <>
+    <table>
+      <thead></thead>
+      <tbody>
       <StatisticsLine value={good} text='good' />
       <StatisticsLine value={neutral} text='neutral' />
       <StatisticsLine value={bad} text='bad' />
       <StatisticsLine value={good+neutral+bad} text='all' />
-      <StatisticsLine value={(good-bad)/(good+neutral+bad)} text='average' />
-      <StatisticsLine value={`${100*good/(good+neutral+bad)}%`} text='positive' />
-    </>
+      <StatisticsLine value={((good-bad)/(good+neutral+bad)).toPrecision(1)} text='average' />
+      <StatisticsLine value={`${(100*good/(good+neutral+bad)).toPrecision(3)}%`} text='positive' />
+      </tbody>
+    </table>
   );  
 }
 
