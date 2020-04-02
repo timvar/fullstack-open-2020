@@ -11,12 +11,12 @@ const Statistics = (props) => {
     <table>
       <thead></thead>
       <tbody>
-      <StatisticsLine value={good} text='good' />
-      <StatisticsLine value={neutral} text='neutral' />
-      <StatisticsLine value={bad} text='bad' />
-      <StatisticsLine value={good+neutral+bad} text='all' />
-      <StatisticsLine value={((good-bad)/(good+neutral+bad)).toPrecision(1)} text='average' />
-      <StatisticsLine value={`${(100*good/(good+neutral+bad)).toPrecision(3)}%`} text='positive' />
+        <StatisticsLine value={good} text='good' />
+        <StatisticsLine value={neutral} text='neutral' />
+        <StatisticsLine value={bad} text='bad' />
+        <StatisticsLine value={good+neutral+bad} text='all' />
+        <StatisticsLine value={((good-bad)/(good+neutral+bad)).toPrecision(1)} text='average' />
+        <StatisticsLine value={`${(100*good/(good+neutral+bad)).toPrecision(3)}%`} text='positive' />
       </tbody>
     </table>
   );  
