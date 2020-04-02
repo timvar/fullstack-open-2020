@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const Header = ({course}) => <h1>{course.name}</h1>
+const Header = ({ course }) => <h1>{course.name}</h1>
 
-const Content = ({course}) => {
+const Content = ({ course }) => {
   return (
     <>
       {course.parts.map(part => <Part key={part.id} name={part.name} exercises={part.exercises} />)}
@@ -11,15 +11,27 @@ const Content = ({course}) => {
   )
 }
 
-const Part = ({name, exercises}) => <p> {name} {exercises} </p>
+const TotalExercises = ({ course }) => {
+  let initval = 0;
+  let total = course.parts.reduce((sum, part) => {
+    return sum + part.exercises;
+  }, initval);
 
-const Course = ({course}) => {
- return (
-   <>
-    <Header course={course} />
-    <Content course={course} />
-   </>
- )
+  return (
+    <p><strong>total of {total} exercises</strong></p>
+  )
+}
+
+const Part = ({ name, exercises }) => <p> {name} {exercises} </p>
+
+const Course = ({ course }) => {
+  return (
+    <>
+      <Header course={course} />
+      <Content course={course} />
+      <TotalExercises course={course} />
+    </>
+  )
 }
 
 const App = () => {
@@ -44,7 +56,7 @@ const App = () => {
       }
     ]
   }
-  
+
   return (
     <div>
       <Course course={course} />
@@ -53,6 +65,6 @@ const App = () => {
 }
 
 ReactDOM.render(
-    <App />,
+  <App />,
   document.getElementById('root')
 );
