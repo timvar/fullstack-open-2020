@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom';
 
 const Button = ({handleClick, text}) => <button onClick={handleClick}> {text} </button>
 
+const MostVoted = ({anecdotes, votes}) => {
+  const mostVoted = votes.findIndex(item => item === (Math.max(...votes)));
+  return <p> {anecdotes[mostVoted]} </p>
+}
+
 const App = (props) => {
   const {anecdotes} = props;
   const [selected, setSelected] = useState(0);
@@ -21,14 +26,13 @@ const App = (props) => {
 
   return (
     <div>
-      <p>
-        {anecdotes[selected]}
-      </p>
-      <p>
-        has {votes[selected]} votes
-      </p>
+      <h1>Anecdote of the day</h1>
+      <p> {anecdotes[selected]} </p>
+      <p> has {votes[selected]} votes</p>
       <Button handleClick={handleVote} text='vote' />
       <Button handleClick={nextAnecdote} text='next anecdote' />
+      <h1>Anecdote with most votes</h1>
+      <MostVoted anecdotes={anecdotes} votes={votes} />
     </div>
   )
 }
