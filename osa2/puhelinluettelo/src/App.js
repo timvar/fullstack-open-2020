@@ -14,6 +14,18 @@ const Notification = ({ message }) => {
   )
 }
 
+const ErrorNotification = ({ errorMessage }) => {
+  if (errorMessage === null) {
+    return null
+  }
+
+  return (
+    <div className="error-message">
+      {errorMessage}
+    </div>
+  )
+}
+
 const Filter = ({ filter, handleChange }) => {
   return (
     <div>
@@ -56,7 +68,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
-  const [noticationMessage, setNoticationMessage] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorNotificationMessage, setErrorNotificationMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -90,12 +103,15 @@ const App = () => {
         .create(newPerson)
         .then(response => {
           setPersons(persons.concat(response.data));
-          setNoticationMessage(`Added ${newName}`);
+          setNotificationMessage(`Added ${newName}`);
           setTimeout(() => {
-            setNoticationMessage(null);
+            setNotificationMessage(null);
           }, 3000);
         })
-        .catch(error => alert('Failed to add person to database.'));
+        .catch(error => {
+          setErrorNotificationMessage(`Failed to add ${newName} to phonebook.`);
+          setTimeout(() => { setErrorNotificationMessage(null); }, 3000);
+        });
     } else {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one ?`)) {
         personService
@@ -107,13 +123,18 @@ const App = () => {
           )
           .then(() => {
             setPersons(persons.map(person => person.name === newName ? newPerson : person));
-            setNoticationMessage(`Updated ${newName}'s phone number to ${newNumber}`);
+            setNotificationMessage(`Updated ${newName}'s phone number to ${newNumber}`);
             setTimeout(() => {
-              setNoticationMessage(null);
+              setNotificationMessage(null);
             }, 3000);
-
           })
-          .catch(error => alert('Failed to update person in database.'));
+          .catch(error => {
+              setErrorNotificationMessage(`Information of ${newName} has already been removed from server.`);
+            setTimeout(() => {
+              setErrorNotificationMessage(null);
+            }, 3000);
+            setPersons(persons.filter(person => person.name !== newName));
+          });
       }
     }
     setNewName('');
@@ -126,19 +147,25 @@ const App = () => {
         .remove(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id));
-          setNoticationMessage(`Removed ${persons.filter(person => person.id === id).map(person => person.name).join()}`);
+          setNotificationMessage(`Removed ${persons.filter(person => person.id === id).map(person => person.name).join()}`);
           setTimeout(() => {
-            setNoticationMessage(null);
+            setNotificationMessage(null);
           }, 3000);
         })
-        .catch(error => alert('Failed to remove person from database.'));
+        .catch(error => {
+          setErrorNotificationMessage(`Failed to remove ${persons.filter(person => person.id === id).map(person => person.name).join()} from database.`);
+          setTimeout(() => {
+            setErrorNotificationMessage(null);
+          }, 3000);
+        })
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={noticationMessage} />
+      <Notification message={notificationMessage} />
+      <ErrorNotification errorMessage={errorNotificationMessage} />
       <Filter filter={newFilter} handleChange={handleFilterChange} />
       <h3>add a new</h3>
       <PersonForm
