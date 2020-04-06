@@ -1,5 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import './index.css'
 import personService from './services/persons'
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className="message">
+      {message}
+    </div>
+  )
+}
 
 const Filter = ({ filter, handleChange }) => {
   return (
@@ -43,6 +56,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [noticationMessage, setNoticationMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -76,6 +90,10 @@ const App = () => {
         .create(newPerson)
         .then(response => {
           setPersons(persons.concat(response.data));
+          setNoticationMessage(`Added ${newName}`);
+          setTimeout(() => {
+            setNoticationMessage(null);
+          }, 3000);
         })
         .catch(error => alert('Failed to add person to database.'));
     } else {
@@ -87,7 +105,14 @@ const App = () => {
               .map(person => person.id),
             newPerson
           )
-          .then(() => setPersons(persons.map(person => person.name === newName ? newPerson : person)))
+          .then(() => {
+            setPersons(persons.map(person => person.name === newName ? newPerson : person));
+            setNoticationMessage(`Updated ${newName}'s phone number to ${newNumber}`);
+            setTimeout(() => {
+              setNoticationMessage(null);
+            }, 3000);
+
+          })
           .catch(error => alert('Failed to update person in database.'));
       }
     }
@@ -99,7 +124,13 @@ const App = () => {
     if (window.confirm(`Delete ${persons.filter(person => person.id === id).map(person => person.name).join()} ?`)) {
       personService
         .remove(id)
-        .then(() => setPersons(persons.filter(person => person.id !== id)))
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id));
+          setNoticationMessage(`Removed ${persons.filter(person => person.id === id).map(person => person.name).join()}`);
+          setTimeout(() => {
+            setNoticationMessage(null);
+          }, 3000);
+        })
         .catch(error => alert('Failed to remove person from database.'));
     }
   }
@@ -107,6 +138,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={noticationMessage} />
       <Filter filter={newFilter} handleChange={handleFilterChange} />
       <h3>add a new</h3>
       <PersonForm
