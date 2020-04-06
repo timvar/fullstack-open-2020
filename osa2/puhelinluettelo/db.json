@@ -26,14 +26,9 @@
       "id": 5
     },
     {
-      "name": "Don Johnson",
-      "number": "4455667",
+      "name": "Bill Gates",
+      "number": "54321",
       "id": 6
-    },
-    {
-      "name": "Steve Jobs",
-      "number": "9999999",
-      "id": 7
     }
   ]
 }

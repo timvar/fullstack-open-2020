@@ -26,14 +26,17 @@ const PersonForm = ({ onSubmit, name, number, handleNameChange, handleNumberChan
 }
 
 const Persons = ({ persons, personFilter, handleRemovePerson }) => {
-  
   return persons
-  .filter(person => person.name.toLowerCase().includes(personFilter.toLowerCase()))
-  .map((person) => <Person key={person.name} person={person} handleRemovePerson={handleRemovePerson} />)
-  
+    .filter(person => person.name.toLowerCase().includes(personFilter.toLowerCase()))
+    .map((person) => <Person key={person.name} person={person} handleRemovePerson={handleRemovePerson} />)
+
 }
 
-const Person = ({ person, handleRemovePerson }) => <p> {person.name} {person.number} <button onClick={() => handleRemovePerson(person.id)} >delete</button> </p>
+const Person = ({ person, handleRemovePerson }) => {
+  return (
+    <p> {person.name} {person.number} <button onClick={() => handleRemovePerson(person.id)} >delete</button> </p>
+  )
+}
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -61,33 +64,44 @@ const App = () => {
     setNewFilter(event.target.value);
   }
 
-  const addPerson = (event) => {
+  const addOrUpdatePerson = (event) => {
     event.preventDefault();
-    if (persons.find(person => person.name === newName) === undefined) {
-      const newPerson = {
-        name: newName,
-        number: newNumber
-      };
+    const newPerson = {
+      name: newName,
+      number: newNumber
+    };
 
+    if (persons.find(person => person.name === newName) === undefined) {
       personService
         .create(newPerson)
         .then(response => {
           setPersons(persons.concat(response.data));
         })
         .catch(error => alert('Failed to add person to database.'));
-      setNewName('');
-      setNewNumber('');
     } else {
-      alert(`${newName} is already added to phonebook`);
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one ?`)) {
+        personService
+          .update(
+            persons
+              .filter(person => person.name === newName)
+              .map(person => person.id),
+            newPerson
+          )
+          .then(() => setPersons(persons.map(person => person.name === newName ? newPerson : person)))
+          .catch(error => alert('Failed to update person in database.'));
+      }
     }
+    setNewName('');
+    setNewNumber('');
   }
 
   const removePerson = (id) => {
-    if (window.confirm(`Delete ${persons.filter(person => person.id === id).map(person => person.name).join()} ?`))
-    personService
-      .remove(id)
-      .then(() => setPersons(persons.filter(person => person.id !== id)))
-      .catch(error => alert('Failed to remove person from database.'));
+    if (window.confirm(`Delete ${persons.filter(person => person.id === id).map(person => person.name).join()} ?`)) {
+      personService
+        .remove(id)
+        .then(() => setPersons(persons.filter(person => person.id !== id)))
+        .catch(error => alert('Failed to remove person from database.'));
+    }
   }
 
   return (
@@ -100,11 +114,11 @@ const App = () => {
         number={newNumber}
         handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
-        onSubmit={addPerson} />
+        onSubmit={addOrUpdatePerson} />
       <h3>Numbers</h3>
-      <Persons 
-        persons={persons} 
-        personFilter={newFilter} 
+      <Persons
+        persons={persons}
+        personFilter={newFilter}
         handleRemovePerson={removePerson} />
     </div>
   )
