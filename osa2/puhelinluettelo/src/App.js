@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-const Person = ({ person }) => <p> {person.name} {person.number} </p>
-
 const Filter = ({ filter, handleChange }) => {
   return (
     <div>
@@ -27,13 +25,15 @@ const PersonForm = ({ onSubmit, name, number, handleNameChange, handleNumberChan
   )
 }
 
-const Persons = ({ persons, personFilter }) => {
-
+const Persons = ({ persons, personFilter, handleRemovePerson }) => {
+  
   return persons
-    .filter(person => person.name.toLowerCase().includes(personFilter.toLowerCase()))
-    .map((person) => <Person key={person.name} person={person} />)
-
+  .filter(person => person.name.toLowerCase().includes(personFilter.toLowerCase()))
+  .map((person) => <Person key={person.name} person={person} handleRemovePerson={handleRemovePerson} />)
+  
 }
+
+const Person = ({ person, handleRemovePerson }) => <p> {person.name} {person.number} <button onClick={() => handleRemovePerson(person.id)} >delete</button> </p>
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -82,6 +82,14 @@ const App = () => {
     }
   }
 
+  const removePerson = (id) => {
+    if (window.confirm(`Delete ${persons.filter(person => person.id === id).map(person => person.name).join()} ?`))
+    personService
+      .remove(id)
+      .then(() => setPersons(persons.filter(person => person.id !== id)))
+      .catch(error => alert('Failed to remove person from database.'));
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -94,7 +102,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
         onSubmit={addPerson} />
       <h3>Numbers</h3>
-      <Persons persons={persons} personFilter={newFilter} />
+      <Persons 
+        persons={persons} 
+        personFilter={newFilter} 
+        handleRemovePerson={removePerson} />
     </div>
   )
 }
