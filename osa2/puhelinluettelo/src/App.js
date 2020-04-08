@@ -109,8 +109,12 @@ const App = () => {
           }, 3000);
         })
         .catch(error => {
-          setErrorNotificationMessage(`Failed to add ${newName} to phonebook.`);
-          setTimeout(() => { setErrorNotificationMessage(null); }, 3000);
+          console.log(error.response.data);
+          error.response.data ?
+            setErrorNotificationMessage(`${error.response.data.error}`)
+            :
+            setErrorNotificationMessage(`Failed to add ${newName} to phonebook.`);
+          setTimeout(() => { setErrorNotificationMessage(null); }, 5000);
         });
     } else {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one ?`)) {
@@ -129,7 +133,7 @@ const App = () => {
             }, 3000);
           })
           .catch(error => {
-              setErrorNotificationMessage(`Information of ${newName} has already been removed from server.`);
+            setErrorNotificationMessage(`Information of ${newName} has already been removed from server.`);
             setTimeout(() => {
               setErrorNotificationMessage(null);
             }, 3000);
