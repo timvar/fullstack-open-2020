@@ -22,9 +22,18 @@ const ShowCountryDetails = ({ country }) => {
   )
 }
 
-const Country = ({ country }) => <p> {country.name} </p>
+const Country = ({ country, handleShowCountryDetails }) => {
+  return (
+    <p>
+      {country.name}
+      <button onClick={() => handleShowCountryDetails(country)}>
+        show
+      </button>
+    </p>
+  )
+}
 
-const ShowCountries = ({ countries, countryFilter }) => {
+const ShowCountries = ({ countries, countryFilter, handleShowCountryDetails }) => {
 
   let countryList = countries
     .filter(country => country.name.toLowerCase().includes(countryFilter.toLowerCase()))
@@ -36,9 +45,14 @@ const ShowCountries = ({ countries, countryFilter }) => {
     return countryList.map(country => <ShowCountryDetails key={country.alpha3Code} country={country} />);
 
   } else if (numberOfCountries > 1 && numberOfCountries <= 10) {
-
-    return countryList.map((country) => <Country key={country.alpha3Code} country={country} />);
-
+    return countryList.map((country) => {
+      return (
+        <Country
+          key={country.alpha3Code}
+          handleShowCountryDetails={handleShowCountryDetails}
+          country={country} />
+      );
+    })
   }
 
   return 'Too many matches, specify another filter'
@@ -56,6 +70,8 @@ const App = () => {
 
   const [countries, setCountries] = useState([]);
   const [countryFilter, setCountryFilter] = useState('');
+  const [showDetails, setShowDetails] = useState(false);
+  const [country, setCountry] = useState(null);
 
   useEffect(() => {
     axios
@@ -67,13 +83,26 @@ const App = () => {
   }, []);
 
   const handleFilterChange = (event) => {
+    setShowDetails(false);
     setCountryFilter(event.target.value);
+  }
+
+  const handleShowCountryDetails = (country) => {
+    setShowDetails(true)
+    setCountry(country)
   }
 
   return (
     <div>
       <Filter filter={countryFilter} handleChange={handleFilterChange} />
-      <ShowCountries countries={countries} countryFilter={countryFilter} />
+      {showDetails ?
+        <ShowCountryDetails country={country} />
+        :
+        <ShowCountries
+          countries={countries}
+          countryFilter={countryFilter}
+          handleShowCountryDetails={handleShowCountryDetails} />
+      }
     </div>
   );
 }
