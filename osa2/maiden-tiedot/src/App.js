@@ -2,10 +2,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ShowCountryDetails = ({ country }) => {
+  const mystyle = {
+    maxWidth: "15%",
+    height: "auto"
+  };
+
   return (
     <>
       <h1> {country.name} </h1>
-      <p> capital: {country.capital}</p>
+      capital: {country.capital}<br />
+      population: {country.population}<br />
+      <h2>languages</h2>
+      <ul>
+        {country.languages.map(l => <li key={l.iso639_2}>{l.name}</li>)}
+      </ul>
+      <img alt='flag' src={country.flag} style={mystyle} />
+
     </>
   )
 }
@@ -21,7 +33,7 @@ const ShowCountries = ({ countries, countryFilter }) => {
 
   if (numberOfCountries === 1) {
 
-    return countryList.map(country => <ShowCountryDetails country={country} />);
+    return countryList.map(country => <ShowCountryDetails key={country.alpha3Code} country={country} />);
 
   } else if (numberOfCountries > 1 && numberOfCountries <= 10) {
 
