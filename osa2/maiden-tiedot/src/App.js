@@ -5,7 +5,7 @@ const Weather = ({ country, localWeather }) => {
   return (
     <>
       <h2> Weather in {country.capital} </h2>
-      <strong>temperature: </strong> {localWeather ? localWeather.current.temperature : ''}
+      <strong>temperature: </strong> {localWeather ? 'localWeather.current.temperature' : ''}
     </>
   )
 }
