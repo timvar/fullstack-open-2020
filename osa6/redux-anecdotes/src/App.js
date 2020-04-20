@@ -1,8 +1,8 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { voteAnecdote,createAnecdote } from './reducers/anecdoteReducer'
+import { voteAnecdote } from './reducers/anecdoteReducer'
 import Anecdotes from './components/Anecdotes'
-import CreateAnecdote from './components/CreateAnecdote'
+import AnecdoteForm from './components/AnecdoteForm'
 
 const App = () => {
 
@@ -12,17 +12,10 @@ const App = () => {
     dispatch(voteAnecdote(id))
   }
 
-  const addAnecdote = (event) => {
-    event.preventDefault()
-    console.log('addAnecdote:', event.target.anecdote.value)
-    dispatch(createAnecdote(event.target.anecdote.value))
-    event.target.anecdote.value = ''
-  }
-
   return (
     <>
       <Anecdotes vote={vote} />
-      <CreateAnecdote addAnecdote={addAnecdote}/>
+      <AnecdoteForm />
     </>
   )
 }
