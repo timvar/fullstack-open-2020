@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ShowCountryDetails = ({ country }) => {
+const Weather = ({ country, localWeather }) => {
+  return (
+    <>
+      <h2> Weather in {country.capital} </h2>
+      <strong>temperature: </strong> {localWeather ? localWeather.current.temperature : ''}
+    </>
+  )
+}
+
+const ShowCountryDetails = ({ country, localWeather }) => {
   const mystyle = {
     maxWidth: "15%",
     height: "auto"
@@ -17,7 +26,7 @@ const ShowCountryDetails = ({ country }) => {
         {country.languages.map(l => <li key={l.iso639_2}>{l.name}</li>)}
       </ul>
       <img alt='flag' src={country.flag} style={mystyle} />
-
+      <Weather country={country} localWeather={localWeather} />
     </>
   )
 }
@@ -72,12 +81,12 @@ const App = () => {
   const [countryFilter, setCountryFilter] = useState('');
   const [showDetails, setShowDetails] = useState(false);
   const [country, setCountry] = useState(null);
+  const [localWeather, setLocalWeather] = useState(null)
 
   useEffect(() => {
     axios
       .get('https://restcountries.eu/rest/v2/all')
       .then(response => {
-        console.log(response.data);
         setCountries(response.data);
       });
   }, []);
@@ -88,15 +97,25 @@ const App = () => {
   }
 
   const handleShowCountryDetails = (country) => {
+    const api_key = process.env.REACT_APP_API_KEY
     setShowDetails(true)
     setCountry(country)
+
+    axios
+      .get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${country.capital}&units=m`)
+      .then(response => {
+        setLocalWeather(response.data)
+      })
   }
 
   return (
     <div>
       <Filter filter={countryFilter} handleChange={handleFilterChange} />
+
       {showDetails ?
-        <ShowCountryDetails country={country} />
+        <>
+          <ShowCountryDetails country={country} localWeather={localWeather} />
+        </>
         :
         <ShowCountries
           countries={countries}
