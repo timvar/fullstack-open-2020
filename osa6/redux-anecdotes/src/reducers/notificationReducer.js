@@ -1,13 +1,16 @@
 const initialState = 'message...'
 
-export const addMessage = message => {
-  return {
-    type: 'NEW_MESSAGE',
-    message
+export const setNotification = (message, delay) => {
+  return async dispatch => {
+    dispatch({
+      type: 'NEW_MESSAGE',
+      message
+    })
+    setTimeout(() => dispatch(clearNotification()), delay * 1000)
   }
 }
 
-export const resetMessage = () => {
+export const clearNotification = () => {
   return {
     type: 'NEW_MESSAGE',
     message: ''
