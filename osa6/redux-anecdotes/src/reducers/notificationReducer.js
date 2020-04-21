@@ -1,18 +1,22 @@
-const initialState = 'message...'
+const initialState = {
+  message: 'message...',
+  timerId: undefined
+}
 
 export const setNotification = (message, delay) => {
   return async dispatch => {
+    const timerId = setTimeout(() => dispatch(clearNotification()), delay * 1000)
     dispatch({
       type: 'NEW_MESSAGE',
-      message
+      message,
+      timerId
     })
-    setTimeout(() => dispatch(clearNotification()), delay * 1000)
   }
 }
 
 export const clearNotification = () => {
   return {
-    type: 'NEW_MESSAGE',
+    type: 'CLEAR_MESSAGE',
     message: ''
   }
 }
@@ -20,8 +24,18 @@ export const clearNotification = () => {
 const notificationReducer = (state = initialState, action) => {
 
   switch (action.type) {
+    case 'CLEAR_MESSAGE':
+      const newMessage = {
+        message: action.message
+      }
+      return newMessage
     case 'NEW_MESSAGE':
-      return action.message
+      clearTimeout(state.timerId)
+      const timerMessage = {
+        message: action.message,
+        timerId: action.timerId
+      }
+      return timerMessage
 
     default: return state
   }
