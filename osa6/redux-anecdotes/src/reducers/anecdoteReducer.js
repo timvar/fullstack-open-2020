@@ -36,7 +36,6 @@ const reducer = (state = [], action) => {
     case 'VOTE':
       return state.map(a => a.id === action.data.id ? action.data : a)
     case 'NEW_ANECDOTE':
-      console.log('new anecdote')
       return state.concat(action.data)
     case 'INIT_ANECDOTES':
       return action.data

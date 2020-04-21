@@ -69,6 +69,16 @@
       "content": "4343",
       "votes": 0,
       "id": "MwJdfIQ"
+    },
+    {
+      "content": "foo-bar",
+      "votes": 1,
+      "id": "5vWTfC_"
+    },
+    {
+      "content": "baz",
+      "votes": 0,
+      "id": "OPB7F4a"
     }
   ]
 }
