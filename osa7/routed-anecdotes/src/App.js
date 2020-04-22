@@ -91,10 +91,17 @@ const CreateNew = ({ addNew, setNotification }) => {
     }, 10000);
   }
 
+  const handleReset = () => {
+    console.log('reset')
+    content.reset()
+    author.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div>
           content
           <input {...content} />
@@ -107,8 +114,8 @@ const CreateNew = ({ addNew, setNotification }) => {
           url for more info
           <input {...info} />
         </div>
-        <button>create</button>
       </form>
+        <button onClick={handleSubmit}>create</button><button onClick={handleReset}>reset</button>
     </div>
   )
 
