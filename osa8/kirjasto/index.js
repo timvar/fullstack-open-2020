@@ -155,6 +155,7 @@ const resolvers = {
       if (authors.find(a => a.name === args.name) !== undefined) {
         const author = authors.find(a => a.name === args.name)
         author.born = args.setBornTo
+        authors = authors.map(a => a.name === args.name ? author : a)
         return author
       } else {
         return null
