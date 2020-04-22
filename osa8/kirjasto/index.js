@@ -114,6 +114,7 @@ const typeDefs = gql`
       published: Int!
       genres: [String]
     ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
@@ -149,6 +150,15 @@ const resolvers = {
         authors = authors.concat(author)
       }
       return book
+    },
+    editAuthor: (root, args) => {
+      if (authors.find(a => a.name === args.name) !== undefined) {
+        const author = authors.find(a => a.name === args.name)
+        author.born = args.setBornTo
+        return author
+      } else {
+        return null
+      }
     }
   }
 }
