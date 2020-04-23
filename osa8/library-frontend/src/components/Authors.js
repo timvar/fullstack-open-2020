@@ -1,6 +1,5 @@
-  
-import React from 'react'
-import { gql, useQuery} from '@apollo/client'
+import React, { useState } from 'react'
+import { gql, useQuery, useMutation } from '@apollo/client'
 
 const ALL_AUTHORS = gql`
   query {
@@ -12,14 +11,69 @@ const ALL_AUTHORS = gql`
   }
 `
 
-const Authors = ({show}) => {
+const UPDATE_AUTHOR = gql`
+  mutation updateAuthor($name: String!, $born: Int!) {
+    editAuthor(
+      name: $name,
+      setBornTo: $born,
+    ) {
+      name
+      born
+    }
+  }
+`
+
+const SetBirthYear = ({ submitBirthYear, authorName, birthYear, setBirthYear, setAuthorName }) => {
+  return (
+    <>
+      <form onSubmit={submitBirthYear}>
+        <div>
+          name
+          <input
+            value={authorName}
+            onChange={({ target }) => setAuthorName(target.value)}
+          />
+        </div>
+        <div>
+          born
+          <input
+            value={birthYear}
+            onChange={({ target }) => setBirthYear(target.value)}
+          />
+        </div>
+        <button type='submit'>update author</button>
+      </form>
+    </>
+  )
+}
+
+const Authors = ({ show }) => {
   const result = useQuery(ALL_AUTHORS)
+  const [authorName, setAuthorName] = useState('')
+  const [birthYear, setBirthYear] = useState('')
+  const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
+    refetchQueries: [{query: ALL_AUTHORS}]
+  })
 
   if (!show) {
     return null
   }
 
   const authors = result.data ? result.data.allAuthors : []
+
+  const handleBirthYear = (event) => {
+    event.preventDefault()
+
+    updateAuthor({
+      variables: {
+        name: authorName,
+        born: Number(birthYear)
+      }
+    })
+
+    setAuthorName('')
+    setBirthYear('')
+  }
 
   return (
     <div>
@@ -44,7 +98,12 @@ const Authors = ({show}) => {
           )}
         </tbody>
       </table>
-
+      <SetBirthYear
+        submitBirthYear={handleBirthYear}
+        authorName={authorName}
+        birthYear={birthYear}
+        setBirthYear={setBirthYear}
+        setAuthorName={setAuthorName} />
     </div>
   )
 }
