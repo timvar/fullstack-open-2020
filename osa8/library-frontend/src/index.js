@@ -14,7 +14,6 @@ const query = gql`
   query {
     allBooks {
       title
-      author
     }
   }
 `

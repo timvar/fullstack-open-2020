@@ -1,5 +1,21 @@
-const { ApolloServer, gql } = require('apollo-server')
+require('dotenv').config()
+const { ApolloServer, UserInputError, gql } = require('apollo-server')
+const mongoose = require('mongoose')
+const Book = require('./models/book')
+const Author = require('./models/author')
+
 const uuid = require('uuid/v1')
+
+mongoose.set('useFindAndModify', false)
+
+const url = process.env.MONGODB_URI
+
+console.log('connecting to', url)
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('connected to MongoDB')
+  })
+  .catch(error => console.log('Error connecting to MongoDB:', error.message))
 
 let authors = [
   {
@@ -26,11 +42,6 @@ let authors = [
     id: "afa5b6f3-344d-11e9-a414-719c6709cf3e",
   },
 ]
-
-/*
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
-*/
 
 let books = [
   {
@@ -95,9 +106,8 @@ const typeDefs = gql`
   type Book {
     title: String!
     published: Int!
-    author: String!
     id: ID!
-    genres: [String]
+    genres: [String!]!
   }
 
   type Query {
@@ -110,7 +120,6 @@ const typeDefs = gql`
   type Mutation {
     addBook(
       title: String!
-      author: String!
       published: Int!
       genres: [String]
     ): Book
@@ -139,15 +148,14 @@ const resolvers = {
     bookCount: (root, args) => books.filter(b => b.author === root.name).length
   },
   Mutation: {
-    addBook: (root, args) => {
-      const book = {...args, id: uuid()}
-      books = books.concat(book)
-      if (authors.find(a => a.name === args.author) === undefined) {
-        const author = {
-          name: args.author,
-          born: null
-        }
-        authors = authors.concat(author)
+    addBook: async (root, args) => {
+      const book = new Book ({...args})
+      try {
+        await book.save()
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args
+        })
       }
       return book
     },
