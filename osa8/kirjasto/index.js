@@ -55,9 +55,9 @@ const resolvers = {
       if (args.genre) {
         return Book.find({genres: {$in: args.genre}}) 
       }
-      return Book.find({}).then(books => books)
+      return Book.find({})
     },
-    allAuthors: () => Author.find({}).then(authors => authors)
+    allAuthors: () => Author.find({})
   },
   Author: {
     bookCount: (root, args) => books.filter(b => b.author === root.name).length
