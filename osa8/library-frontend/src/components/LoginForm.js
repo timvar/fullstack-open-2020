@@ -16,7 +16,6 @@ const LoginForm = ({ setError, setToken }) => {
     if ( result.data ) {
       const token = result.data.login.value
       setToken(token)
-      console.log('token', token)
       localStorage.setItem('library-user-token', token)
     }
   }, [result.data]) // eslint-disable-line

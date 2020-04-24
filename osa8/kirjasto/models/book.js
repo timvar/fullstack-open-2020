@@ -11,11 +11,11 @@ const bookSchema = new mongoose.Schema({
     type: Number,
   },
   author: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId ,
     ref: 'Author'
   },
   genres: [
-    { type: String}
+    { type: String }
   ]
 })
 
