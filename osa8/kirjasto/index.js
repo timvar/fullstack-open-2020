@@ -30,6 +30,10 @@ const typeDefs = gql`
     value: String!
   }
 
+  input AuthorInput {
+    name: String
+  } 
+
   type Author {
     name: String!
     id: ID!
@@ -40,6 +44,7 @@ const typeDefs = gql`
   type Book {
     title: String!
     published: Int!
+    author: Author
     id: ID!
     genres: [String!]!
   }
@@ -47,7 +52,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int! 
     authorCount: Int!
-    allBooks(author: String, genre: String): [Book!]!
+    allBooks(author: AuthorInput, genre: String): [Book!]!
     allAuthors: [Author]
     me: User
   }
@@ -56,6 +61,7 @@ const typeDefs = gql`
     addBook(
       title: String!
       published: Int!
+      author: String!
       genres: [String]
     ): Book
     editAuthor(name: String!, setBornTo: Int!): Author
@@ -72,7 +78,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    bookCount: () => Book.find({}).then(books => books.length),
+    bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.find({}).then(authors => authors.length),
     allBooks: (root, args) => {
       if (args.genre) {
@@ -86,21 +92,39 @@ const resolvers = {
     }
   },
   Author: {
-    bookCount: (root, args) => books.filter(b => b.author === root.name).length
+    bookCount: (root, args) => 0,
   },
   Mutation: {
     addBook: async (root, args, context) => {
       const book = new Book({ ...args })
+      const author = await Author.find({name: args.author})
+
+      if (author.length === 0) {
+        const newAuthor = new Author({
+          name: args.author
+        })
+        try {
+          await newAuthor.save()
+          book.author = newAuthor
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args
+          })
+        }
+      } else if (author.length === 1) {
+        book.author = author[0]
+      }
+      
       const currentUser = context.currentUser
       if (!currentUser) { throw new AuthenticationError('not authenticated')}
+
       try {
-        await book.save()
+        return await book.save()
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args
         })
       }
-      return book
     },
     editAuthor: async (root, args, {currentUser}) => {
       if (!currentUser) { throw new AuthenticationError('not authenticated')}
