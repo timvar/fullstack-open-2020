@@ -131,13 +131,12 @@ const resolvers = {
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
       try {
-        await author.save()
+        return await author.save()
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args
         })
       }
-      return author
     },
     createUser: (root, args) => {
       const user = new User({ username: args.username })

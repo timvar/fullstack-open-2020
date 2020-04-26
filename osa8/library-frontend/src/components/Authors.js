@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/client'
 import {ALL_AUTHORS, UPDATE_AUTHOR} from '../queries'
-
 
 const SetBirthYear = ({ submitBirthYear, authorName, birthYear, setBirthYear, setAuthorName }) => {
   return (
@@ -29,28 +28,31 @@ const SetBirthYear = ({ submitBirthYear, authorName, birthYear, setBirthYear, se
 
 const Authors = ({ show }) => {
   const result = useQuery(ALL_AUTHORS)
+  const [authors, setAuthors] = useState([])
   const [authorName, setAuthorName] = useState('')
   const [birthYear, setBirthYear] = useState('')
   const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
     refetchQueries: [{query: ALL_AUTHORS}]
   })
-
+  
+  useEffect(() => {
+    if (result.data) {
+      setAuthors(result.data.allAuthors)
+    }
+  }, [result.data]) 
+  
   if (!show) {
     return null
   }
 
-  const authors = result.data ? result.data.allAuthors : []
-
   const handleBirthYear = (event) => {
     event.preventDefault()
-
     updateAuthor({
       variables: {
         name: authorName,
         born: Number(birthYear)
       }
     })
-
     setAuthorName('')
     setBirthYear('')
   }
