@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -18,7 +17,7 @@ const Notify = ({ errorMessage }) => {
 }
 
 const App = () => {
-  const [page, setPage] = useState('authors')
+  const [page, setPage] = useState('')
   const [token, setToken] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const client = useApolloClient()
@@ -41,26 +40,30 @@ const App = () => {
       <Notify errorMessage={errorMessage} />
       {(!token) ? (
         <>
-          <h2>Login</h2>
-          <LoginForm
-            setToken={setToken}
-            setError={notify} />
+          <button onClick={() => setPage('authors')}>authors</button>
+          <button onClick={() => setPage('books')}>books</button>
+          <button onClick={() => setPage('login')}>login</button>
         </>
       ) :
         (
           <>
             <div>
-              <button onClick={logout}>logout</button>
               <button onClick={() => setPage('authors')}>authors</button>
               <button onClick={() => setPage('books')}>books</button>
               <button onClick={() => setPage('add')}>add book</button>
-            </div>
-            <Authors show={page === 'authors'} />
-            <Books show={page === 'books'} />
-            <NewBook show={page === 'add'} />
+              <button onClick={logout}>logout</button>
+            </div >
           </>
         )
       }
+      <Authors show={page === 'authors'} token={token} />
+      <Books show={page === 'books'} />
+      <NewBook show={page === 'add'} />
+      <LoginForm
+        show={page === 'login'}
+        setToken={setToken}
+        setError={notify}
+        setPage={setPage} />
     </>
   )
 }

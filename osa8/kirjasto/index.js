@@ -92,12 +92,13 @@ const resolvers = {
     }
   },
   Author: {
-    bookCount: (root, args) => 0,
+    bookCount: (root, args) => Book.find({}).populate('author')
+      .then(books => books.filter(b => b.author.name === root.name).length)
   },
   Mutation: {
     addBook: async (root, args, context) => {
       const book = new Book({ ...args })
-      const author = await Author.find({name: args.author})
+      const author = await Author.find({ name: args.author })
 
       if (author.length === 0) {
         const newAuthor = new Author({
@@ -114,9 +115,9 @@ const resolvers = {
       } else if (author.length === 1) {
         book.author = author[0]
       }
-      
+
       const currentUser = context.currentUser
-      if (!currentUser) { throw new AuthenticationError('not authenticated')}
+      if (!currentUser) { throw new AuthenticationError('not authenticated') }
 
       try {
         return await book.save()
@@ -126,8 +127,8 @@ const resolvers = {
         })
       }
     },
-    editAuthor: async (root, args, {currentUser}) => {
-      if (!currentUser) { throw new AuthenticationError('not authenticated')}
+    editAuthor: async (root, args, { currentUser }) => {
+      if (!currentUser) { throw new AuthenticationError('not authenticated') }
       const author = await Author.findOne({ name: args.name })
       author.born = args.setBornTo
       try {
@@ -168,14 +169,14 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: async ({req}) => {
+  context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
         auth.substring(7), JWT_SECRET
       )
       const currentUser = await User.findById(decodedToken.id)
-      return {currentUser}
+      return { currentUser }
     }
   }
 })
