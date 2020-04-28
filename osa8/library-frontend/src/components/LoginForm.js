@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from 'react'
-import { useMutation } from '@apollo/client'
-import { LOGIN } from '../queries'
+import { useMutation, useQuery } from '@apollo/client'
+import { LOGIN, MYINFO } from '../queries'
 
-const LoginForm = ({ setError, setToken, show, setPage }) => {
+const LoginForm = ({ setError, setToken, show, setPage, setFavGenre }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const myinfo = useQuery(MYINFO)
 
-  const [ login, result ] = useMutation(LOGIN, {
+  const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
       setError(error.graphQLErrors[0].message)
     }
   })
 
   useEffect(() => {
-    if ( result.data ) {
+    if (result.data) {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('library-user-token', token)
+      if (myinfo.data && myinfo.data.me) { setFavGenre(myinfo.data.me.favoriteGenre) }
     }
-  }, [result.data]) // eslint-disable-line
+  }, [result.data])
 
-  const submit = async (event) => {
+  const submit = (event) => {
     event.preventDefault()
     login({ variables: { username, password } })
+    myinfo.refetch()
+    setUsername('')
+    setPassword('')
     setPage('')
   }
-  
+
   if (!show) {
     return null
   }
