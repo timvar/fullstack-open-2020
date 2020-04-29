@@ -28,6 +28,10 @@ const Books = ({ show }) => {
     }
   }
 
+  if (show && result.loading)  {
+    return <div>loading...</div>
+  }
+
   return (
     <div>
       <h2>books</h2>

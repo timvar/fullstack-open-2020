@@ -14,15 +14,14 @@ const LoginForm = ({ setError, setToken, show, setPage, setFavGenre }) => {
   })
 
   useEffect(() => {
-    if (result.data) {
+    if ( result.data ) {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('library-user-token', token)
-      if (myinfo.data && myinfo.data.me) { setFavGenre(myinfo.data.me.favoriteGenre) }
     }
-  }, [result.data])
+  }, [result.data]) // eslint-disable-line
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault()
     login({ variables: { username, password } })
     myinfo.refetch()
