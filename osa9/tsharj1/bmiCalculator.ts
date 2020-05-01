@@ -1,5 +1,5 @@
 
-export const calculateBmi = (height : number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   const heightInMeters = height / 100;
   const bmi = weight / (heightInMeters * heightInMeters);
   if (bmi >= 18.5 && bmi < 25) {
@@ -11,5 +11,6 @@ export const calculateBmi = (height : number, weight: number): string => {
   } else {
     return 'Underweight';
   }
-}
+};
+
 
