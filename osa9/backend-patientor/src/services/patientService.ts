@@ -1,5 +1,5 @@
 import patients from '../../data/patients';
-import {Patient} from '../types';
+import {Patient, NewPatientEntry} from '../types';
 import {v4 as uuidv4} from 'uuid';
 
 const getEntries = (): Pick<Patient, 'id' | 'name' | 'dateOfBirth' | 'gender' | 'occupation'>[] => {
@@ -13,19 +13,11 @@ const getEntries = (): Pick<Patient, 'id' | 'name' | 'dateOfBirth' | 'gender' | 
 };
 
 const addEntry = (
-  name: string,
-  dateOfBirth: string,
-  ssn: string,
-  gender: string,
-  occupation: string,
+  newPatient: NewPatientEntry
 ): Patient => {
   const newPatientEntry = {
     id: uuidv4(),
-    name,
-    dateOfBirth,
-    ssn,
-    gender,
-    occupation
+    ...newPatient
   };
   patients.push(newPatientEntry);
 
