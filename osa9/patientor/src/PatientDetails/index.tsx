@@ -40,6 +40,23 @@ const PatientDetails: React.FC = () => {
       <h2> {patient ? patient.name : null} <Icon name={genderSymbol(patient?.gender)} />  </h2>
       <p> ssn: {patient ? (patient.ssn ? patient.ssn : null) : null} </p>
       <p> occupation: {patient ? patient.occupation : null} </p>
+      <h3>entries</h3>
+      {patient?.entries.map((item, index) => {
+        return (
+          <>
+            <p key={`${index}-${item.id}`}>{item.date} {item.description} </p>
+            {item.diagnosisCodes ? (
+              item.diagnosisCodes.map((d,idx) => {
+                return (<li key={idx}>{d}</li>);
+              })
+            )
+            :
+            (
+              null
+            )}
+          </>  
+        );
+      })}
     </>
   );
 };
