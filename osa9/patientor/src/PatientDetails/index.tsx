@@ -4,6 +4,7 @@ import { Patient, Gender, Diagnosis } from "../types";
 import { Icon } from "semantic-ui-react";
 import axios from 'axios';
 import { apiBaseUrl } from "../constants";
+import EntryDetails from '../components/EntryDetails';
 
 const PatientDetails: React.FC = () => {
   const {id} = useParams<{id: string}>();
@@ -28,6 +29,7 @@ const PatientDetails: React.FC = () => {
         `${apiBaseUrl}/diagnoses`
       );
       setDiagnoses(diagnosisList);
+      console.log(diagnoses);
     } catch (e) {
       console.error(e);
     }
@@ -54,10 +56,15 @@ const PatientDetails: React.FC = () => {
       <p> ssn: {patient ? (patient.ssn ? patient.ssn : null) : null} </p>
       <p> occupation: {patient ? patient.occupation : null} </p>
       <h3>entries</h3>
-      {patient?.entries.map((item, index) => {
-        return (
-          <>
-            <p key={`${index}-${item.id}`}>{item.date} {item.description} </p>
+      {patient?.entries.map((item, index) => <EntryDetails key={index} entry={item} />)}
+    </>
+  );
+};
+
+export default PatientDetails;
+
+/*
+<p key={`${index}-${item.id}`}>{item.date} {item.description} </p>
             {item.diagnosisCodes ? (
               item.diagnosisCodes.map((d,idx) => {
               return (<li key={idx}>{d} {(diagnoses?.find((diag: Diagnosis) => diag.code === d))?.name}</li>);
@@ -67,12 +74,4 @@ const PatientDetails: React.FC = () => {
             (
               null
             )}
-          </>  
-        );
-      })}
-    </>
-  );
-};
-
-export default PatientDetails;
-
+*/
