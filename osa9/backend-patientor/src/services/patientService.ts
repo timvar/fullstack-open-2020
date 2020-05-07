@@ -1,5 +1,5 @@
 import patients from '../../data/patientData';
-import {Patient, NewPatientEntry} from '../types';
+import {Patient, NewPatientEntry, NewEntry, Entry} from '../types';
 import {v4 as uuidv4} from 'uuid';
 
 const getEntries = (): Pick<Patient, 'id' | 'name' | 'dateOfBirth' | 'gender' | 'occupation'>[] => {
@@ -23,6 +23,26 @@ const addEntry = (
   return newPatientEntry;
 };
 
+const addRecordEntry = (patient: Patient,
+  newRecord: NewEntry
+): Patient => {
+
+  console.log('add record: ', patient);
+  console.log('new rec: ', newRecord);
+
+  const newRecordEntry: Entry  = {
+    id: uuidv4(),
+    ...newRecord
+  };
+
+  console.log(newRecordEntry);
+  patient?.entries.push(newRecordEntry);
+
+  return patient;
+
+
+};
+
 const findById = (id: string): Patient | undefined => {
   const patient = patients.find(p => p.id === id);
   return patient;
@@ -31,5 +51,6 @@ const findById = (id: string): Patient | undefined => {
 export default {
   getEntries,
   addEntry,
-  findById
+  findById,
+  addRecordEntry
 };
