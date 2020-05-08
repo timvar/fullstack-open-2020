@@ -70,4 +70,5 @@ export type HealthCheckEntryForm = Omit<HealthCheckEntry, 'id'>;
 export interface Props {
   onSubmit: (values: HealthCheckEntryForm) => void;
   onCancel: () => void;
+  error?: string;
 }

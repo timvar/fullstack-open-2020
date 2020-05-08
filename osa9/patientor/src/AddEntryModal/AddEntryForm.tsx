@@ -5,7 +5,6 @@ import { Grid, Button } from "semantic-ui-react";
 import {DiagnosisSelection, TextField, NumberField} from '../AddPatientModal/FormField';
 import { useStateValue } from "../state";
 
-
 const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
   const [{ diagnoses }] = useStateValue();
 
@@ -93,7 +92,6 @@ const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
                 </Button>
               </Grid.Column>
             </Grid>
-
         </Form>
       );
     }}

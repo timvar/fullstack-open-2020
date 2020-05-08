@@ -27,15 +27,11 @@ const addRecordEntry = (patient: Patient,
   newRecord: NewEntry
 ): Patient => {
 
-  console.log('add record: ', patient);
-  console.log('new rec: ', newRecord);
-
   const newRecordEntry: Entry  = {
     id: uuidv4(),
     ...newRecord
   };
 
-  console.log(newRecordEntry);
   patient?.entries.push(newRecordEntry);
 
   return patient;
