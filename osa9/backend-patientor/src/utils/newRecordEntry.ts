@@ -28,7 +28,7 @@ const isNumber = (item: any): item is number => {
 };
 
 const parseNumber = (item: any): number => {
-  if (!item || !isNumber(item)) {
+  if ((item < 0) || !isNumber(item)) {
     throw new Error(`Incorrect or missing item ${item}`);
   }
   return item;

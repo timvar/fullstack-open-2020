@@ -64,3 +64,10 @@ export interface Patient {
   dateOfBirth?: string;
   entries: Entry[];
 }
+
+export type HealthCheckEntryForm = Omit<HealthCheckEntry, 'id'>;
+
+export interface Props {
+  onSubmit: (values: HealthCheckEntryForm) => void;
+  onCancel: () => void;
+}

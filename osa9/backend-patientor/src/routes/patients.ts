@@ -35,19 +35,11 @@ router.post('/:id/entries', (req, res) => {
     if ( patient && newRecordEntry) {
       patient = patientService.addRecordEntry(patient, newRecordEntry);
     } 
-      
     res.json(patient);
   }
  catch (e) {
   res.status(400).send(e.message);
 }
-
-  /*
-  try {
-    const newRecord = patientService.addRecordEntry(newRecordEntry);
-    res.json(newRecord);
-  */
-  //res.json(patient);
 });
 
 export default router;
